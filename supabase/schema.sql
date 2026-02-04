@@ -1,14 +1,5 @@
--- Hospital Management System Database Schema
--- Run this in your Supabase SQL Editor
-
--- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ============================================================
--- USERS & AUTHENTICATION
--- ============================================================
-
--- Profiles table (extends Supabase auth.users)
 CREATE TABLE profiles (
     id UUID REFERENCES auth.users PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
@@ -20,9 +11,6 @@ CREATE TABLE profiles (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- DEPARTMENTS & FACILITIES
--- ============================================================
 
 CREATE TABLE departments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -44,9 +32,6 @@ CREATE TABLE beds (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- PATIENTS
--- ============================================================
 
 CREATE TABLE patients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -66,10 +51,6 @@ CREATE TABLE patients (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- OPD QUEUE MANAGEMENT
--- ============================================================
-
 CREATE TABLE opd_queues (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id UUID REFERENCES patients(id) NOT NULL,
@@ -86,10 +67,6 @@ CREATE TABLE opd_queues (
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
--- ============================================================
--- ADMISSIONS & DISCHARGES
--- ============================================================
 
 CREATE TABLE admissions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -108,10 +85,6 @@ CREATE TABLE admissions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
--- ============================================================
--- INVENTORY MANAGEMENT
--- ============================================================
 
 CREATE TABLE inventory_categories (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -164,10 +137,6 @@ CREATE TABLE inventory_transactions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- PRESCRIPTIONS
--- ============================================================
-
 CREATE TABLE prescriptions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id UUID REFERENCES patients(id) NOT NULL,
@@ -190,10 +159,6 @@ CREATE TABLE prescription_items (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- ANALYTICS & REPORTING
--- ============================================================
-
 CREATE TABLE daily_stats (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     date DATE NOT NULL UNIQUE,
@@ -206,10 +171,6 @@ CREATE TABLE daily_stats (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ============================================================
--- INDEXES FOR PERFORMANCE
--- ============================================================
-
 CREATE INDEX idx_opd_queues_status ON opd_queues(status);
 CREATE INDEX idx_opd_queues_date ON opd_queues(DATE(created_at));
 CREATE INDEX idx_opd_queues_department ON opd_queues(department_id);
@@ -220,10 +181,6 @@ CREATE INDEX idx_admissions_patient ON admissions(patient_id);
 CREATE INDEX idx_inventory_items_stock ON inventory_items(current_stock);
 CREATE INDEX idx_inventory_batches_expiry ON inventory_batches(expiry_date);
 CREATE INDEX idx_prescriptions_status ON prescriptions(status);
-
--- ============================================================
--- TRIGGERS & FUNCTIONS
--- ============================================================
 
 -- Update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -285,9 +242,6 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_update_inventory_stock AFTER INSERT ON inventory_transactions
     FOR EACH ROW EXECUTE FUNCTION update_inventory_stock();
 
--- ============================================================
--- ROW LEVEL SECURITY (RLS)
--- ============================================================
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
@@ -336,13 +290,6 @@ CREATE POLICY "Medical staff can manage patients" ON patients
             AND profiles.role IN ('doctor', 'nurse', 'receptionist', 'admin')
         )
     );
-
--- Similar policies for other tables...
--- For production, customize these based on your security requirements
-
--- ============================================================
--- SEED DATA
--- ============================================================
 
 -- Insert default departments
 INSERT INTO departments (name, description) VALUES
