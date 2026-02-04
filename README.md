@@ -260,7 +260,7 @@ hospital-management/
 
 ## 🚧 Future Enhancements
 
-- [ ] Patient medical records with file uploads
+- [-] Patient medical records with file uploads
 - [ ] Appointment scheduling system
 - [ ] Billing and payment integration
 - [ ] Laboratory test management
@@ -310,12 +310,6 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License.
 
-## 🆘 Support
-
-For support and questions:
-- Open an issue on GitHub
-- Contact: support@example.com
-
 ## 🙏 Acknowledgments
 
 - Built with [Next.js](https://nextjs.org/)
@@ -323,10 +317,4 @@ For support and questions:
 - UI components styled with [Tailwind CSS](https://tailwindcss.com/)
 - Icons from [Lucide](https://lucide.dev/)
 
-## 📸 Screenshots
-
-(Add screenshots of your application here)
-
 ---
-
-**Note**: This is a comprehensive hospital management system designed for real-world use. Ensure you comply with healthcare data regulations (HIPAA, GDPR, etc.) when deploying in production.
