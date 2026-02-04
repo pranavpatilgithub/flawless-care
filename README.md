@@ -1,4 +1,4 @@
-# Hospital Management System (HMS)
+# Flawless Care [Mangage without chaos.]
 
 A comprehensive, production-ready hospital management system built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This system addresses key hospital operations including OPD queue management, bed availability tracking, patient admissions, and inventory management.
 
@@ -65,21 +65,14 @@ This system solves critical challenges in hospital operations:
 - **Icons**: Lucide React
 - **Date Handling**: date-fns
 
-## 📋 Prerequisites
 
-Before you begin, ensure you have:
-
-- Node.js 18.x or higher
-- npm or yarn package manager
-- A Supabase account (free tier works)
-- Git (for cloning the repository)
 
 ## 🚀 Installation & Setup
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/pranavpatilgithub/flawless-care.git
 cd hospital-management
 ```
 
