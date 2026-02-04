@@ -260,7 +260,7 @@ hospital-management/
 
 ## 🚧 Future Enhancements
 
-- [-] Patient medical records with file uploads
+- [ ] Patient medical records with file uploads
 - [ ] Appointment scheduling system
 - [ ] Billing and payment integration
 - [ ] Laboratory test management
