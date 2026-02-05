@@ -25,6 +25,34 @@ interface DashboardStats {
   criticalInventory: number
   admissionsToday: number
 }
+function ActionButton({
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  icon: any
+  label: string
+  onClick?: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="
+        flex items-center justify-center gap-2
+        rounded-lg
+        border border-slate-200
+        bg-slate-50
+        px-4 py-3
+        text-sm font-medium text-slate-700
+        hover:bg-slate-100
+        transition
+      "
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
+  )
+}
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
@@ -128,31 +156,28 @@ export default function DashboardPage() {
       title: 'OPD Patients Today',
       value: stats.opdToday,
       icon: Users,
-      color: 'bg-blue-500',
       trend: '+12%',
     },
     {
       title: 'Bed Occupancy',
       value: `${stats.bedsOccupied}/${stats.totalBeds}`,
       icon: Bed,
-      color: 'bg-purple-500',
       subtitle: `${occupancyRate}% occupied`,
     },
     {
       title: 'Admissions Today',
       value: stats.admissionsToday,
       icon: Activity,
-      color: 'bg-green-500',
       trend: '+8%',
     },
     {
       title: 'Low Stock Items',
       value: stats.criticalInventory,
       icon: AlertTriangle,
-      color: 'bg-orange-500',
       alert: stats.criticalInventory > 0,
     },
   ]
+
 
   if (loading) {
     return (
@@ -163,66 +188,81 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-600 mt-1">Welcome back! Here's what's happening today.</p>
-      </div>
+      <header>
+        <h1 className="text-2xl font-semibold text-slate-900">
+          Dashboard
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Overview of today’s hospital operations
+        </p>
+      </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow"
+            className="rounded-xl border border-slate-200 bg-white p-6"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-600">{stat.title}</p>
-                <div className="flex items-baseline mt-2">
-                  <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
-                  {stat.trend && (
-                    <span className="ml-2 text-sm font-medium text-green-600 flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      {stat.trend}
-                    </span>
-                  )}
-                </div>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-slate-500">
+                  {stat.title}
+                </p>
+
+                <p className="mt-2 text-3xl font-semibold text-slate-900">
+                  {stat.value}
+                </p>
+
                 {stat.subtitle && (
-                  <p className="text-sm text-slate-500 mt-1">{stat.subtitle}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {stat.subtitle}
+                  </p>
                 )}
+
+                {stat.trend && (
+                  <p className="mt-2 inline-flex items-center text-xs font-medium text-emerald-600">
+                    <TrendingUp className="mr-1 h-3.5 w-3.5" />
+                    {stat.trend}
+                  </p>
+                )}
+
                 {stat.alert && (
-                  <p className="text-sm text-orange-600 mt-1 font-medium">Requires attention</p>
+                  <p className="mt-2 text-xs font-medium text-amber-600">
+                    Requires attention
+                  </p>
                 )}
               </div>
-              <div className={`${stat.color} rounded-lg p-3`}>
-                <stat.icon className="h-6 w-6 text-white" />
+
+              <div className="rounded-lg bg-slate-100 p-2.5 text-slate-600">
+                <stat.icon className="h-5 w-5" />
               </div>
             </div>
           </div>
         ))}
-      </div>
+      </section>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* OPD Queue Status */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">OPD Queue Status</h3>
-          <ResponsiveContainer width="100%" height={300}>
+      {/* Charts */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+          <h3 className="mb-4 text-sm font-medium text-slate-900">
+            OPD Queue Status
+          </h3>
+
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={queueData}
                 cx="50%"
                 cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: ${value}`}
-                outerRadius={80}
-                fill="#8884d8"
+                outerRadius={90}
                 dataKey="value"
+                label
               >
                 {queueData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip />
@@ -230,55 +270,57 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </div>
 
-        {/* Bed Distribution */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Bed Distribution by Type</h3>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="rounded-xl border border-slate-200 bg-white p-6">
+          <h3 className="mb-4 text-sm font-medium text-slate-900">
+            Bed Distribution
+          </h3>
+
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={bedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="name" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
+              <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+              <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12 }} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 12 }} />
               <Tooltip />
-              <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]}>
+              <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                 {bedData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={index} fill={entry.color} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </section>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+      <section className="rounded-xl border border-slate-200 bg-white p-6">
+        <h3 className="mb-4 text-sm font-medium text-slate-900">
+          Quick Actions
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
+          <ActionButton
+            icon={Users}
+            label="Add Patient to OPD"
             onClick={() => setShowAddPatientModal(true)}
-            className="flex items-center justify-center px-6 py-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            <Users className="h-5 w-5 mr-2" />
-            Add New Patient
-          </button>
-          <button
+          />
+          <ActionButton
+            icon={Activity}
+            label="New Admission"
             onClick={() => setShowAdmissionModal(true)}
-            className="flex items-center justify-center px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            <Activity className="h-5 w-5 mr-2" />
-            New Admission
-          </button>
-          <button className="flex items-center justify-center px-6 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-            <Package className="h-5 w-5 mr-2" />
-            Update Inventory
-          </button>
+          />
+          <ActionButton
+            icon={Package}
+            label="Update Inventory"
+          />
         </div>
-      </div>
+      </section>
 
       <AddPatientToQueue
         isOpen={showAddPatientModal}
         onClose={() => setShowAddPatientModal(false)}
         onSuccess={fetchDashboardData}
       />
+
       <NewAdmission
         isOpen={showAdmissionModal}
         onClose={() => setShowAdmissionModal(false)}
@@ -286,4 +328,5 @@ export default function DashboardPage() {
       />
     </div>
   )
+
 }
