@@ -5,6 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { Bed as BedIcon, AlertCircle, CheckCircle, Wrench, Clock } from 'lucide-react'
 import type { Bed, Department } from '@/lib/types'
 import { getBedOccupancyRate } from '@/lib/utils'
+import { AddBed } from '@/components/AddBed'
+import { EditBed } from '@/components/EditBed'
+import { Edit } from 'lucide-react'
 
 export default function BedsPage() {
   const [beds, setBeds] = useState<Bed[]>([])
@@ -13,10 +16,12 @@ export default function BedsPage() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all')
   const [selectedType, setSelectedType] = useState<string>('all')
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
-
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedBed, setSelectedBed] = useState<Bed | null>(null)
   useEffect(() => {
     fetchData()
-    
+
     // Real-time subscription
     const supabase = createClient()
     const channel = supabase
@@ -33,7 +38,7 @@ export default function BedsPage() {
 
   async function fetchData() {
     const supabase = createClient()
-    
+
     try {
       const { data: bedsData, error: bedsError } = await supabase
         .from('beds')
@@ -57,10 +62,13 @@ export default function BedsPage() {
       setLoading(false)
     }
   }
-
+  function handleEditBed(bed: Bed) {
+    setSelectedBed(bed)
+    setShowEditModal(true)
+  }
   async function updateBedStatus(bedId: string, status: string) {
     const supabase = createClient()
-    
+
     const { error } = await supabase
       .from('beds')
       .update({ status })
@@ -173,7 +181,18 @@ export default function BedsPage() {
           <p className="text-3xl font-bold text-blue-600 mt-1">{stats.reserved}</p>
         </div>
       </div>
-
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Bed Management</h1>
+          <p className="text-slate-600 mt-1">Monitor and manage bed availability across departments</p>
+        </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="btn btn-primary"
+        >
+          Add New Bed(s)
+        </button>
+      </div>
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -263,7 +282,7 @@ export default function BedsPage() {
                   onClick={() => updateBedStatus(bed.id, 'available')}
                   className="flex-1 text-xs px-2 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
                 >
-                  Mark Available
+                  Available
                 </button>
               )}
               {bed.status !== 'maintenance' && (
@@ -274,6 +293,12 @@ export default function BedsPage() {
                   Maintenance
                 </button>
               )}
+              <button
+                onClick={() => handleEditBed(bed)}
+                className="text-xs px-2 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                <Edit className="h-3 w-3" />
+              </button>
             </div>
           </div>
         ))}
@@ -284,6 +309,21 @@ export default function BedsPage() {
           No beds match the selected filters
         </div>
       )}
+      {/* Modals */}
+      <AddBed
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={fetchData}
+      />
+      <EditBed
+        isOpen={showEditModal}
+        bed={selectedBed}
+        onClose={() => {
+          setShowEditModal(false)
+          setSelectedBed(null)
+        }}
+        onSuccess={fetchData}
+      />
     </div>
   )
 }

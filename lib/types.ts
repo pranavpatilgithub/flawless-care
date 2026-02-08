@@ -194,3 +194,63 @@ export interface DailyStats {
   revenue: number
   created_at: string
 }
+
+// Add to existing types.ts file
+
+export type AppointmentType = 'consultation' | 'follow_up' | 'procedure' | 'checkup'
+export type AppointmentStatus = 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
+
+export interface Appointment {
+  id: string
+  patient_id: string
+  doctor_id: string
+  department_id: string
+  appointment_date: string
+  appointment_time: string
+  duration_minutes: number
+  appointment_type: AppointmentType
+  status: AppointmentStatus
+  reason?: string
+  notes?: string
+  reminder_sent: boolean
+  created_at: string
+  updated_at: string
+  patient?: Patient
+  doctor?: Profile
+  department?: Department
+}
+
+// Update Prescription interface
+export interface Prescription {
+  id: string
+  patient_id: string
+  doctor_id: string
+  admission_id?: string
+  opd_queue_id?: string
+  status: PrescriptionStatus
+  notes?: string
+  diagnosis?: string
+  follow_up_date?: string
+  dispensed_by?: string
+  dispensed_at?: string
+  created_at: string
+  patient?: Patient
+  doctor?: Profile
+  items?: PrescriptionItem[]
+}
+
+// Update PrescriptionItem interface
+export interface PrescriptionItem {
+  id: string
+  prescription_id: string
+  item_id: string
+  dosage: string
+  frequency: string
+  duration: string
+  quantity: number
+  dispensed_quantity: number
+  cost?: number
+  instructions?: string
+  created_at: string
+  item?: InventoryItem
+}
