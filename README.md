@@ -11,6 +11,8 @@ This system solves critical challenges in hospital operations:
 - **Patient Admissions**: Streamlined admission/discharge process with comprehensive record management
 - **Inventory Management**: Track medicines and consumables with automated stock alerts and expiry monitoring
 
+# [Live Link](https://flawless-care.vercel.app/)
+
 ## ✨ Features
 
 ### 📊 Dashboard
