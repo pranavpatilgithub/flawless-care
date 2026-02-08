@@ -3,13 +3,16 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Save, Users, Building2, Package, Bell, Shield, Database } from 'lucide-react'
+import { UserPlus, Users as UsersIcon } from 'lucide-react'
+import { AddDoctorSimple } from '@/components/AddDoctorSimple'
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general')
   const [loading, setLoading] = useState(false)
   const [departments, setDepartments] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
-  
+  const [doctors, setDoctors] = useState<any[]>([])
+  const [showAddDoctorModal, setShowAddDoctorModal] = useState(false)
   const [generalSettings, setGeneralSettings] = useState({
     hospital_name: 'MediCare Hospital',
     hospital_address: '123 Healthcare Street, Medical City',
@@ -42,22 +45,27 @@ export default function SettingsPage() {
 
   async function fetchData() {
     const supabase = createClient()
-    
-    const [deptRes, catRes] = await Promise.all([
+
+    const [deptRes, catRes, doctorsRes] = await Promise.all([
       supabase.from('departments').select('*').order('name'),
       supabase.from('inventory_categories').select('*').order('name'),
+      supabase.from('profiles').select('*').eq('role', 'doctor').order('full_name'),
     ])
 
     setDepartments(deptRes.data || [])
     setCategories(catRes.data || [])
+    setDoctors(doctorsRes.data || [])
   }
+
+
+
 
   async function handleAddDepartment(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
 
     const supabase = createClient()
-    
+
     try {
       const { error } = await supabase
         .from('departments')
@@ -76,12 +84,39 @@ export default function SettingsPage() {
     }
   }
 
+
+  async function handleDeleteDoctor(id: string) {
+    if (!confirm('Are you sure you want to delete this doctor? This will remove their access.')) return
+
+    const supabase = createClient()
+
+    try {
+      // Delete from profiles (auth user will remain but won't have profile)
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+
+      alert('Doctor removed successfully')
+      fetchData()
+    } catch (error: any) {
+      console.error('Error deleting doctor:', error)
+      if (error.code === '23503') {
+        alert('Cannot delete doctor. They have associated records (appointments, prescriptions, etc.)')
+      } else {
+        alert('Failed to delete doctor')
+      }
+    }
+  }
+
   async function handleAddCategory(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
 
     const supabase = createClient()
-    
+
     try {
       const { error } = await supabase
         .from('inventory_categories')
@@ -143,6 +178,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: 'general', name: 'General', icon: Building2 },
     { id: 'departments', name: 'Departments', icon: Building2 },
+    { id: 'doctors', name: 'Doctors', icon: UsersIcon },
     { id: 'categories', name: 'Inventory Categories', icon: Package },
     { id: 'notifications', name: 'Notifications', icon: Bell },
     { id: 'security', name: 'Security', icon: Shield },
@@ -165,11 +201,10 @@ export default function SettingsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
-                  activeTab === tab.id
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
-                }`}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${activeTab === tab.id
+                  ? 'border-primary-600 text-primary-600'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
+                  }`}
               >
                 <tab.icon className="h-5 w-5" />
                 {tab.name}
@@ -294,6 +329,52 @@ export default function SettingsPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Doctors Management */}
+          {activeTab === 'doctors' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-900">Doctor Management</h3>
+                <button
+                  onClick={() => setShowAddDoctorModal(true)}
+                  className="btn btn-primary"
+                >
+                  <UserPlus className="h-5 w-5 mr-2" />
+                  Add New Doctor
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {doctors.length === 0 ? (
+                  <div className="text-center py-12 text-slate-500">
+                    <UsersIcon className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <p>No doctors registered yet</p>
+                  </div>
+                ) : (
+                  doctors.map((doctor) => (
+                    <div key={doctor.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">
+                          {doctor.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900">Dr. {doctor.full_name}</p>
+                          <p className="text-sm text-slate-600">{doctor.department}</p>
+                          <p className="text-xs text-slate-500">{doctor.email} • {doctor.phone}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteDoctor(doctor.id)}
+                        className="text-sm px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -434,7 +515,7 @@ export default function SettingsPage() {
               <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
                 <h3 className="text-lg font-semibold text-blue-900 mb-2">Security Settings</h3>
                 <p className="text-blue-700">
-                  Security settings are managed through Supabase Authentication. 
+                  Security settings are managed through Supabase Authentication.
                   Visit your Supabase dashboard to configure:
                 </p>
                 <ul className="list-disc list-inside mt-3 space-y-1 text-blue-700">
@@ -481,6 +562,11 @@ export default function SettingsPage() {
           )}
         </div>
       </div>
+      <AddDoctorSimple
+        isOpen={showAddDoctorModal}
+        onClose={() => setShowAddDoctorModal(false)}
+        onSuccess={fetchData}
+      />
     </div>
   )
 }
