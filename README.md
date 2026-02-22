@@ -2,7 +2,7 @@
 
 A comprehensive, production-ready hospital management system built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This system addresses key hospital operations including OPD queue management, bed availability tracking, patient admissions, and inventory management.
 
-## 🏥 Problem Statement
+## Problem Statement
 
 This system solves critical challenges in hospital operations:
 
@@ -13,15 +13,15 @@ This system solves critical challenges in hospital operations:
 
 # [Live Link](https://flawless-care.vercel.app/)
 
-## ✨ Features
+## Features
 
-### 📊 Dashboard
+### Dashboard
 - Real-time statistics and analytics
 - Visual charts for OPD queue status and bed distribution
 - Quick action buttons for common tasks
 - Department-wise metrics
 
-### 🏥 OPD Queue Management
+### OPD Queue Management
 - Token-based queue system
 - Priority handling (Normal, Urgent, Emergency)
 - Real-time status updates (Waiting, In Consultation, Completed)
@@ -29,7 +29,7 @@ This system solves critical challenges in hospital operations:
 - Department-wise queue filtering
 - Live updates using Supabase real-time subscriptions
 
-### 🛏️ Bed Management
+### Bed Management
 - Real-time bed availability tracking
 - Multiple bed types (General, ICU, Private, Semi-Private, Emergency)
 - Status management (Available, Occupied, Maintenance, Reserved)
@@ -37,15 +37,15 @@ This system solves critical challenges in hospital operations:
 - Occupancy rate monitoring
 - Visual grid view with color-coded status
 
-### 👤 Patient Admissions
+### Patient Admissions
 - Complete admission workflow
 - Emergency, planned, and transfer admission types
 - Bed assignment integration
 - Admission duration tracking
 - Discharge management
 - Patient medical history
-
-### 📦 Inventory Management
+  
+### Inventory Management
 - Medicine, consumable, and equipment tracking
 - Real-time stock level monitoring
 - Critical stock alerts (below minimum threshold)
@@ -55,7 +55,7 @@ This system solves critical challenges in hospital operations:
 - Category-based organization
 - Stock level indicators with progress bars
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
@@ -69,7 +69,7 @@ This system solves critical challenges in hospital operations:
 
 
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 
@@ -142,7 +142,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 hospital-management/
@@ -179,7 +179,7 @@ hospital-management/
 └── package.json                # Project dependencies
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Core Tables
 
@@ -224,7 +224,7 @@ hospital-management/
 - **Triggers**: Database triggers for data consistency
 - **RLS Policies**: Row-level security for data protection
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
 - **Responsive Design**: Works on desktop, tablet, and mobile
 - **Real-time Updates**: Live data synchronization
@@ -234,7 +234,7 @@ hospital-management/
 - **Error Handling**: Graceful error messages
 - **Accessibility**: ARIA labels and keyboard navigation
 
-## 🔐 Security Features
+## Security Features
 
 - Row Level Security (RLS) policies
 - Role-based access control
@@ -243,7 +243,7 @@ hospital-management/
 - SQL injection prevention
 - XSS protection
 
-## 📊 Key Metrics & Analytics
+## Key Metrics & Analytics
 
 - OPD patient count (daily, weekly, monthly)
 - Bed occupancy rates
@@ -252,7 +252,7 @@ hospital-management/
 - Stock level alerts
 - Admission/discharge statistics
 
-## 🚧 Future Enhancements
+## Future Enhancements
 
 - [ ] Patient medical records with file uploads
 - [ ] Appointment scheduling system
@@ -267,7 +267,7 @@ hospital-management/
 - [ ] Multi-language support
 - [ ] Telemedicine integration
 
-## 🔧 Development
+## Development
 
 ### Running in Production
 
@@ -282,7 +282,7 @@ npm start
 npm run lint
 ```
 
-## 📝 Environment Variables
+## Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
@@ -290,7 +290,7 @@ npm run lint
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side only) | Yes |
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -300,11 +300,11 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Next.js](https://nextjs.org/)
 - Database powered by [Supabase](https://supabase.com/)
